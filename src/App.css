@@ -522,3 +522,87 @@
 .question-list::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* ----------- Bot progress card ----------- */
+.bot-progress-card {
+  background: linear-gradient(160deg, rgba(249, 115, 22, 0.12), rgba(249, 115, 22, 0.02));
+  border: 1px solid rgba(249, 115, 22, 0.4);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bot-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.bot-progress-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--bot);
+  font-weight: 700;
+}
+.counter-pill.bot-pill {
+  background: rgba(249, 115, 22, 0.18);
+  color: var(--bot);
+  border-color: rgba(249, 115, 22, 0.5);
+}
+.bot-progress-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+.bot-progress-cell {
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: filter 0.2s, opacity 0.2s;
+}
+.bot-progress-cell.eliminated {
+  filter: grayscale(1) brightness(0.45);
+  opacity: 0.45;
+}
+.bot-progress-cell.eliminated::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* ----------- Ask form (free-text) ----------- */
+.ask-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.ask-input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.ask-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+.ask-input::placeholder {
+  color: var(--text-soft);
+}
+.question-list-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-soft);
+  font-weight: 600;
+  margin: 4px 0;
+}

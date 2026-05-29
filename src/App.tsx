@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Avatar } from './Avatar'
 import { CHARACTERS, type Character } from './characters'
 import { QUESTIONS, QUESTION_MAP, type Question } from './questions'
 import { chooseBotAction, pickRandom } from './ai'
+import { parseFreeTextQuestion } from './freeText'
 import './App.css'
 
 type Phase =
@@ -179,6 +180,38 @@ function App() {
   function playerAsksQuestion(qId: string) {
     const q = QUESTION_MAP[qId]
     if (!q) return
+    askWithQuestion(q, q.text)
+  }
+
+  function playerAsksFreeText(rawText: string) {
+    const text = rawText.trim()
+    if (!text) return
+    const match = parseFreeTextQuestion(text)
+    if (!match) {
+      // No recognized feature — log a system tip without consuming a turn.
+      setState((s) => {
+        if (s.phase !== 'player-turn') return s
+        return {
+          ...s,
+          log: [
+            ...s.log,
+            { speaker: 'player', text },
+            {
+              speaker: 'system',
+              text:
+                "Hmm, I didn't spot a feature in that. Try keywords like " +
+                "'glasses', 'beard', 'mustache', 'red hair', 'bald', 'hat', " +
+                "'freckles', 'big nose', 'earrings', 'man'/'woman', etc.",
+            },
+          ],
+        }
+      })
+      return
+    }
+    askWithQuestion(match.question, text)
+  }
+
+  function askWithQuestion(q: Question, displayedQuestion: string) {
     setState((s) => {
       if (s.phase !== 'player-turn') return s
       const answer = q.predicate(s.botSecret)
@@ -194,7 +227,7 @@ function App() {
         turnCount: s.turnCount + 1,
         log: [
           ...s.log,
-          { speaker: 'player', text: q.text },
+          { speaker: 'player', text: displayedQuestion },
           {
             speaker: 'bot',
             text: answer ? 'Yes.' : 'No.',
@@ -269,13 +302,10 @@ function App() {
     setState((s) => {
       if (s.phase !== 'bot-asking' || !s.pendingBotQuestion || !s.playerSecret) return s
       const q = s.pendingBotQuestion
-      // Validate truthfulness (player must answer truthfully — we enforce it).
-      const truth = q.predicate(s.playerSecret)
-      const answer = truth // ignore player's button choice if it disagrees — but to keep UX honest, just use truth
-      // (We still let player click either button so they feel in control; the bot
-      // uses the truth to keep the game fair.)
-      void yes
-      // Update bot candidates
+      // Trust the player's click — same as the physical board game, the bot
+      // has no way to verify. If you lie, you lie.
+      const answer = yes
+      // Update bot candidates based on the player's answer.
       const newCandidates = new Set<number>()
       for (const id of s.botCandidates) {
         const c = CHARACTERS.find((x) => x.id === id)!
@@ -392,6 +422,8 @@ function App() {
               )}
             </div>
 
+            <BotProgress candidates={state.botCandidates} />
+
             <div className="chat-card">
               <div className="chat-header">
                 <span>Chat</span>
@@ -409,6 +441,7 @@ function App() {
                 {state.phase === 'player-turn' && (
                   <PlayerTurnControls
                     onAsk={playerAsksQuestion}
+                    onAskFreeText={playerAsksFreeText}
                     onGuess={playerStartsGuess}
                     asked={askedSoFar}
                   />
@@ -458,6 +491,34 @@ function App() {
   )
 }
 
+function BotProgress({ candidates }: { candidates: Set<number> }) {
+  const remaining = candidates.size
+  return (
+    <div className="bot-progress-card">
+      <div className="bot-progress-header">
+        <span className="bot-progress-label">Bot&rsquo;s progress</span>
+        <span className="counter-pill bot-pill">
+          {remaining}/{CHARACTERS.length} still in play
+        </span>
+      </div>
+      <div className="bot-progress-board">
+        {CHARACTERS.map((c) => {
+          const inPlay = candidates.has(c.id)
+          return (
+            <div
+              key={c.id}
+              className={`bot-progress-cell ${inPlay ? '' : 'eliminated'}`}
+              title={`${c.name}${inPlay ? '' : ' \u2014 bot has ruled out'}`}
+            >
+              <Avatar character={c} size={36} />
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function TurnBadge({ phase, winner }: { phase: Phase; winner: 'player' | 'bot' | null }) {
   if (phase === 'game-over') {
     return <span className={`turn-badge ${winner}`}>{winner === 'player' ? 'You won' : 'Bot won'}</span>
@@ -470,20 +531,46 @@ function TurnBadge({ phase, winner }: { phase: Phase; winner: 'player' | 'bot' |
 
 function PlayerTurnControls({
   onAsk,
+  onAskFreeText,
   onGuess,
   asked,
 }: {
   onAsk: (id: string) => void
+  onAskFreeText: (text: string) => void
   onGuess: () => void
   asked: Set<string>
 }) {
+  const [draft, setDraft] = useState('')
+
+  function submit(e?: FormEvent) {
+    if (e) e.preventDefault()
+    const t = draft.trim()
+    if (!t) return
+    onAskFreeText(t)
+    setDraft('')
+  }
+
   return (
     <div className="player-controls">
+      <form className="ask-form" onSubmit={submit}>
+        <input
+          type="text"
+          className="ask-input"
+          placeholder="Ask a yes/no question…"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          aria-label="Ask a yes/no question in your own words"
+        />
+        <button className="btn primary" type="submit" disabled={!draft.trim()}>
+          Ask
+        </button>
+      </form>
       <div className="control-row">
-        <button className="btn primary" type="button" onClick={onGuess}>
+        <button className="btn ghost" type="button" onClick={onGuess}>
           Make my guess
         </button>
       </div>
+      <div className="question-list-label">Or tap a preset:</div>
       <div className="question-list">
         {QUESTION_CATEGORIES.map((cat) => (
           <div key={cat.label} className="question-category">
