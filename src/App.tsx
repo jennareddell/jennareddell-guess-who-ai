@@ -220,20 +220,42 @@ function App() {
       for (const c of CHARACTERS) {
         if (q.predicate(c) !== answer) newEliminated.add(c.id)
       }
+      const remaining = CHARACTERS.filter((c) => !newEliminated.has(c.id))
+      const baseLog: LogEntry[] = [
+        ...s.log,
+        { speaker: 'player', text: displayedQuestion },
+        {
+          speaker: 'bot',
+          text: answer ? 'Yes.' : 'No.',
+          result: answer ? 'yes' : 'no',
+        },
+      ]
+      // If the answer narrowed the board to a single face, that face must
+      // be the bot's secret (bot answers truthfully), so the player wins
+      // automatically — no need to make them click Make-my-guess.
+      if (remaining.length === 1) {
+        const winner = remaining[0]
+        return {
+          ...s,
+          eliminatedByPlayer: newEliminated,
+          phase: 'game-over',
+          winner: 'player',
+          turnCount: s.turnCount + 1,
+          log: [
+            ...baseLog,
+            {
+              speaker: 'system',
+              text: `Only ${winner.name} is left standing — that must be the bot's character! You win!`,
+            },
+          ],
+        }
+      }
       return {
         ...s,
         eliminatedByPlayer: newEliminated,
         phase: 'bot-thinking',
         turnCount: s.turnCount + 1,
-        log: [
-          ...s.log,
-          { speaker: 'player', text: displayedQuestion },
-          {
-            speaker: 'bot',
-            text: answer ? 'Yes.' : 'No.',
-            result: answer ? 'yes' : 'no',
-          },
-        ],
+        log: baseLog,
       }
     })
   }
@@ -313,6 +335,36 @@ function App() {
       }
       const newAsked = new Set(s.botAsked)
       newAsked.add(q.id)
+      const baseLog: LogEntry[] = [
+        ...s.log,
+        {
+          speaker: 'player',
+          text: answer ? 'Yes.' : 'No.',
+          result: answer ? 'yes' : 'no',
+        },
+      ]
+      // If the bot's candidate set is now a single character, skip the
+      // 'thinking' pause and have it lock in that guess immediately —
+      // matches the player-side auto-win for symmetry.
+      if (newCandidates.size === 1) {
+        const only = CHARACTERS.find((c) => c.id === [...newCandidates][0])!
+        return {
+          ...s,
+          botCandidates: newCandidates,
+          botAsked: newAsked,
+          pendingBotQuestion: null,
+          pendingBotGuess: only,
+          phase: 'bot-guessing',
+          turnCount: s.turnCount + 1,
+          log: [
+            ...baseLog,
+            {
+              speaker: 'bot',
+              text: `That narrows it down — your character must be ${only.name}!`,
+            },
+          ],
+        }
+      }
       return {
         ...s,
         botCandidates: newCandidates,
@@ -320,14 +372,7 @@ function App() {
         pendingBotQuestion: null,
         phase: 'player-turn',
         turnCount: s.turnCount + 1,
-        log: [
-          ...s.log,
-          {
-            speaker: 'player',
-            text: answer ? 'Yes.' : 'No.',
-            result: answer ? 'yes' : 'no',
-          },
-        ],
+        log: baseLog,
       }
     })
   }
