@@ -43,7 +43,7 @@ const QUESTION_CATEGORIES: { label: string; ids: string[] }[] = [
   },
   {
     label: 'Accessories & features',
-    ids: ['glasses', 'hat', 'earrings', 'beard', 'mustache', 'facialHair', 'freckles'],
+    ids: ['glasses', 'hat', 'earrings', 'beard', 'mustache', 'facialHair', 'freckles', 'bigNose'],
   },
 ]
 

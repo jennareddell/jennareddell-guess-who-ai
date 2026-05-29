@@ -23,6 +23,7 @@ export const QUESTIONS: Question[] = [
   { id: 'earrings', text: 'Does your character wear earrings?', predicate: (c) => c.earrings },
   { id: 'freckles', text: 'Does your character have freckles?', predicate: (c) => c.freckles },
   { id: 'smile', text: 'Is your character smiling?', predicate: (c) => c.smile },
+  { id: 'bigNose', text: 'Does your character have a big nose?', predicate: (c) => c.bigNose },
 
   { id: 'black', text: 'Does your character have black hair?', predicate: (c) => c.hairColor === 'black' },
   { id: 'brown', text: 'Does your character have brown hair?', predicate: (c) => c.hairColor === 'brown' },
