@@ -38,10 +38,6 @@ const QUESTION_CATEGORIES: { label: string; ids: string[] }[] = [
     ids: ['short', 'long', 'bald'],
   },
   {
-    label: 'Eyes',
-    ids: ['blue', 'green', 'brownEyes'],
-  },
-  {
     label: 'Accessories & features',
     ids: ['glasses', 'hat', 'earrings', 'beard', 'mustache', 'facialHair', 'freckles', 'bigNose'],
   },

@@ -42,10 +42,6 @@ export const QUESTIONS: Question[] = [
     predicate: (c) => c.hairLength === 'short',
   },
 
-  { id: 'blue', text: 'Does your character have blue eyes?', predicate: (c) => c.eyeColor === 'blue' },
-  { id: 'green', text: 'Does your character have green eyes?', predicate: (c) => c.eyeColor === 'green' },
-  { id: 'brownEyes', text: 'Does your character have brown eyes?', predicate: (c) => c.eyeColor === 'brown' },
-
   { id: 'young', text: 'Is your character young?', predicate: (c) => c.age === 'young' },
   { id: 'elderly', text: 'Is your character elderly?', predicate: (c) => c.age === 'elderly' },
 

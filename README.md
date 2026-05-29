@@ -35,8 +35,11 @@ See `src/ai.ts` for the implementation.
 ## Stack
 
 - [Vite](https://vitejs.dev) + React 19 + TypeScript
-- All character art is procedurally drawn as inline SVG — no image assets
-  required.
+- Character portraits are rendered with the
+  [DiceBear "personas"](https://personas.draftbit.com/) style
+  ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), by Draftbit),
+  fed deterministic options so each character's hair, beard, glasses, hat,
+  etc. match its declared properties.
 
 ## Local development
 
