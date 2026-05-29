@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import confetti from 'canvas-confetti'
 import { Avatar } from './Avatar'
 import { CHARACTERS, type Character } from './characters'
 import { QUESTIONS, QUESTION_MAP, type Question } from './questions'
@@ -552,6 +553,14 @@ function App() {
           </aside>
         </main>
       )}
+      {state.phase === 'game-over' && state.winner && (
+        <WinnerModal
+          winner={state.winner}
+          botSecret={state.botSecret}
+          playerSecret={state.playerSecret}
+          onRestart={restart}
+        />
+      )}
     </div>
   )
 }
@@ -661,6 +670,94 @@ function PlayerTurnControls({
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function WinnerModal({
+  winner,
+  botSecret,
+  playerSecret,
+  onRestart,
+}: {
+  winner: 'player' | 'bot'
+  botSecret: Character
+  playerSecret: Character | null
+  onRestart: () => void
+}) {
+  useEffect(() => {
+    const duration = winner === 'player' ? 2500 : 1500
+    const end = Date.now() + duration
+    const colors = winner === 'player'
+      ? ['#fbbf24', '#f59e0b', '#34d399', '#60a5fa', '#a78bfa', '#f472b6']
+      : ['#94a3b8', '#cbd5e1', '#64748b']
+
+    function frame() {
+      confetti({
+        particleCount: winner === 'player' ? 5 : 3,
+        angle: 60,
+        spread: 60,
+        origin: { x: 0, y: 0.7 },
+        colors,
+        startVelocity: 55,
+      })
+      confetti({
+        particleCount: winner === 'player' ? 5 : 3,
+        angle: 120,
+        spread: 60,
+        origin: { x: 1, y: 0.7 },
+        colors,
+        startVelocity: 55,
+      })
+      if (Date.now() < end) requestAnimationFrame(frame)
+    }
+
+    if (winner === 'player') {
+      confetti({
+        particleCount: 160,
+        spread: 110,
+        origin: { y: 0.55 },
+        colors,
+        startVelocity: 45,
+      })
+    }
+    frame()
+  }, [winner])
+
+  const headline = winner === 'player' ? 'You won!' : 'Bot wins!'
+  const subline =
+    winner === 'player'
+      ? `You correctly figured out the bot's character.`
+      : `The bot guessed your character correctly.`
+
+  return (
+    <div className="winner-overlay" role="dialog" aria-modal="true" aria-labelledby="winner-headline">
+      <div className={`winner-modal ${winner}`}>
+        <div className="winner-emoji" aria-hidden>
+          {winner === 'player' ? '\uD83C\uDF89' : '\uD83E\uDD16'}
+        </div>
+        <div id="winner-headline" className="winner-headline">
+          {headline}
+        </div>
+        <div className="winner-subline">{subline}</div>
+        <div className="winner-reveal">
+          <div className="winner-reveal-card">
+            <div className="winner-reveal-label">Bot&rsquo;s secret was</div>
+            <Avatar character={botSecret} size={96} />
+            <div className="winner-reveal-name">{botSecret.name}</div>
+          </div>
+          {playerSecret && (
+            <div className="winner-reveal-card">
+              <div className="winner-reveal-label">Your secret was</div>
+              <Avatar character={playerSecret} size={96} />
+              <div className="winner-reveal-name">{playerSecret.name}</div>
+            </div>
+          )}
+        </div>
+        <button className="btn primary winner-play-again" type="button" onClick={onRestart}>
+          Play again
+        </button>
       </div>
     </div>
   )
