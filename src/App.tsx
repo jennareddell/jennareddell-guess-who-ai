@@ -316,6 +316,26 @@ function App() {
       const next = new Set(s.eliminatedByPlayer)
       if (next.has(c.id)) next.delete(c.id)
       else next.add(c.id)
+      const remaining = CHARACTERS.filter((c2) => !next.has(c2.id))
+      // If a manual flip leaves only one face on the board during the
+      // player's turn, that face must be the bot's secret — declare a
+      // win automatically.
+      if (remaining.length === 1 && s.phase === 'player-turn') {
+        const winner = remaining[0]
+        return {
+          ...s,
+          eliminatedByPlayer: next,
+          phase: 'game-over',
+          winner: 'player',
+          log: [
+            ...s.log,
+            {
+              speaker: 'system',
+              text: `Only ${winner.name} is left standing — that must be the bot's character! You win!`,
+            },
+          ],
+        }
+      }
       return { ...s, eliminatedByPlayer: next }
     })
   }
