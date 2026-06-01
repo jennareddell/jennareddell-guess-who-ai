@@ -87,12 +87,11 @@
 
 /* ----------- Board ----------- */
 .board-section {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(31, 41, 55, 0.4);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 16px 18px 20px;
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
 }
 
 .board-header {
@@ -261,7 +260,6 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
   display: flex;
   flex-direction: column;
   min-height: 480px;
@@ -304,7 +302,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.03), transparent);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), transparent);
 }
 
 .chat-entry {
@@ -340,7 +338,7 @@
   border-bottom-left-radius: 4px;
 }
 .chat-system .chat-bubble {
-  background: rgba(15, 23, 42, 0.06);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-soft);
   font-size: 12px;
   font-style: italic;
@@ -595,7 +593,7 @@
 .ask-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
 .ask-input::placeholder {
   color: var(--text-soft);
@@ -613,7 +611,7 @@
 .winner-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(2, 6, 23, 0.72);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
@@ -632,24 +630,24 @@
   width: min(520px, 100%);
   max-height: calc(100vh - 48px);
   overflow-y: auto;
-  background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%);
+  background: linear-gradient(160deg, #1f2937 0%, #111827 100%);
   border-radius: 20px;
   padding: 32px 28px 28px;
   box-shadow:
-    0 30px 80px rgba(15, 23, 42, 0.25),
-    0 0 0 1px rgba(15, 23, 42, 0.05) inset;
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
   text-align: center;
   animation: winner-pop 360ms cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 .winner-modal.win {
-  border: 2px solid rgba(245, 158, 11, 0.7);
+  border: 2px solid rgba(251, 191, 36, 0.55);
   box-shadow:
-    0 30px 80px rgba(15, 23, 42, 0.25),
-    0 0 60px rgba(251, 191, 36, 0.45),
-    0 0 0 1px rgba(15, 23, 42, 0.05) inset;
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 60px rgba(251, 191, 36, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
 }
 .winner-modal.lose {
-  border: 2px solid rgba(100, 116, 139, 0.5);
+  border: 2px solid rgba(148, 163, 184, 0.45);
 }
 @keyframes winner-pop {
   0% { transform: scale(0.7) translateY(20px); opacity: 0; }
@@ -672,13 +670,13 @@
   letter-spacing: 0.5px;
   line-height: 1.05;
   margin-bottom: 6px;
-  background: linear-gradient(90deg, #d97706, #db2777, #2563eb);
+  background: linear-gradient(90deg, #fbbf24, #f472b6, #60a5fa);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 .winner-modal.lose .winner-headline {
-  background: linear-gradient(90deg, #475569, #64748b);
+  background: linear-gradient(90deg, #cbd5e1, #94a3b8);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -696,8 +694,8 @@
   margin-bottom: 22px;
 }
 .winner-reveal-card {
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 14px 16px 12px;
   display: flex;
